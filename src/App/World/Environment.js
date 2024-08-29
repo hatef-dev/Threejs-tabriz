@@ -1,7 +1,8 @@
 import * as THREE from "three";
 import assetStore from "../Utils/AssetStore.js";
 import App from "../App.js";
-
+import ShowInfo from "./ShowInfo.js";
+import ModalContentProvider from '../UI/ModalContentProvider.js'
 export default class Environment {
   constructor() {
     this.app = new App();
@@ -10,9 +11,11 @@ export default class Environment {
     this.pane = this.app.gui.pane;
     this.assetStore = assetStore.getState();
     this.environment = this.assetStore.loadedAssets.environment;
-    this.arr = [];
+    // this.arr = [];
     this.loadEnvironment();
-    this.intensityLights();
+    // this.intensityLights();
+    this.addLights()
+    this.showInformation()
   }
 
   loadEnvironment() {
@@ -20,12 +23,8 @@ export default class Environment {
     this.scene.add(environmentScene);
     environmentScene.traverse((obj) => {
       if (obj.type == "DirectionalLight") {
-        this.pane.addInput(obj, 'intensity',{
-          min: 0,
-          max:4,
-          step:0.1
-        })
-        this.arr.push(obj);
+        obj.visible = false
+        // this.arr.push(obj);
       }
     });
     environmentScene.scale.setScalar(40);
@@ -49,7 +48,23 @@ export default class Environment {
       "Road",
     ];
     const physicalObjectsTree = ["Tree"];
+    const shadowCaster = [
+      "Khaneh_Mashrouteh",
+      "Sarkis_Church",
+      "El_Goli",
+      "Rah_Ahan",
+      "Rah_Ahan_Locomotive",
+      "Meidan_Saat",
+      "Blue_Mosque",
+      "Arg",
+      "Behnam",
+      "Tree"
+    ];
 
+    const ShadowRecive = [
+      "Ground",
+      "Road",
+    ]
     for (const child of environmentScene.children) {
       const isPhysicalObject = physicalObjects.some((keyword) =>
         child.name.includes(keyword)
@@ -67,10 +82,31 @@ export default class Environment {
       );
       if (isPhysicalObjectTree) {
         child.traverse((obj) => {
-          child.scale.setScalar(0.15)
+          child.scale.setScalar(0.15);
           if (obj.isMesh) {
-
             this.physics.add(obj, "fixed", "cuboid");
+          }
+        });
+      }
+
+      const isShadowCaster = shadowCaster.some((keyword) =>
+        child.name.includes(keyword)
+      );
+      if (isShadowCaster) {
+        child.traverse((obj) => {
+          if (obj.isMesh) {
+            obj.castShadow= true
+          }
+        });
+      }
+
+      const isShadowReceiver = ShadowRecive.some((keyword) =>
+        child.name.includes(keyword)
+      );
+      if (isShadowCaster) {
+        child.traverse((obj) => {
+          if (obj.isMesh) {
+            obj.receiveShadow= true
           }
         });
       }
@@ -89,30 +125,31 @@ export default class Environment {
     this.arr[2].intensity = 0.2;
     this.arr[3].intensity = 0.8;
     this.arr[4].intensity = 0.9;
-
   }
   addLights() {
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
     this.scene.add(ambientLight);
 
     this.directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
-    this.directionalLight.position.set(1, 1, 1);
+    this.directionalLight.position.set(0, 1 , 100);
     this.directionalLight.castShadow = true;
-    this.directionalLight.shadow.bias = -0.002;
+    // this.directionalLight.shadow.camera = 30
+    this.directionalLight.shadow.bias = 0.002;
+
     this.directionalLight.shadow.normalBias = 0.072;
+    // this.directionalLight.shadow.camera.top = 30;
     this.scene.add(this.directionalLight);
+    const  dirShadowHelper = new THREE.CameraHelper(
+      this.directionalLight.shadow.camera
+    )
+    this.scene.add(this.directionalLight)
+    this.scene.add(dirShadowHelper)
   }
 
-  addGround() {
-    const groundGeometry = new THREE.BoxGeometry(100, 1, 100);
-    const groundMaterial = new THREE.MeshStandardMaterial({
-      color: "turquoise",
-    });
-    this.groundMesh = new THREE.Mesh(groundGeometry, groundMaterial);
-    this.groundMesh.scale.setScalar(15);
-    this.groundMesh.position.y = -6;
-    this.scene.add(this.groundMesh);
-    this.physics.add(this.groundMesh, "fixed", "cuboid");
-    this.groundMesh.castShadow = true;
+  showInformation(){
+    const meshInfo1= this.environment.scene.getObjectByName("El_Goli")
+    const modalContentProvider = new ModalContentProvider()
+    this.info1 = new ShowInfo(meshInfo1, modalContentProvider.getModalInfo('aboutMe'))
+    // console.log(this.environment.scene)
   }
 }
