@@ -19,7 +19,7 @@ export default class App{
         // threejs elements
         this.canvas = document.querySelector("canvas.threejs");
         this.scene = new THREE.Scene()
-        this.scene.background = new THREE.Color('green')
+        this.scene.background = new THREE.Color()
         // add debug GUI
         this.gui = new GUI()
 
