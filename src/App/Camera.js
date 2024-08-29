@@ -63,7 +63,7 @@ export default class Camera {
       targetOffset.add(characterPosition);
 
       this.instance.position.lerp(cameraOffset, 0.04);
-      this.controls.target.lerp(targetOffset, 0.005);
+      this.controls.target.lerp(targetOffset, 0.09);
     }
   }
 }

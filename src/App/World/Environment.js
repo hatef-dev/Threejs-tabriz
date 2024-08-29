@@ -147,9 +147,15 @@ export default class Environment {
   }
 
   showInformation(){
-    const meshInfo1= this.environment.scene.getObjectByName("El_Goli")
+    const meshInfo1= this.environment.scene.getObjectByName("Arg")
+    const meshInfo2= this.environment.scene.getObjectByName("Meidan_Saat")
     const modalContentProvider = new ModalContentProvider()
     this.info1 = new ShowInfo(meshInfo1, modalContentProvider.getModalInfo('aboutMe'))
+    this.info2 = new ShowInfo(meshInfo2, modalContentProvider.getModalInfo('projects'))
     // console.log(this.environment.scene)
+  }
+  loop(){
+    this.info1.loop()
+    this.info2.loop()
   }
 }
