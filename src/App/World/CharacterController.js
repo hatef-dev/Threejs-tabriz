@@ -91,7 +91,7 @@ export default class CharacterController {
     }
 
     // Normalize and scale movement vector and set y component to -1
-    movement.normalize().multiplyScalar(0.1);
+    movement.normalize().multiplyScalar(0.2);
     movement.y = -1;
 
     // Update collider movement and get new position of rigid body

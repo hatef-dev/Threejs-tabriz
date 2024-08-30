@@ -10,7 +10,8 @@ const assetsToLoad = [
     id:'environment',
     path:'/models/Final Scene3/Final Scene3.gltf',
     type: 'model'
-  }
+  },
+  
 ];
 
 const assetStore = createStore((set) => ({
