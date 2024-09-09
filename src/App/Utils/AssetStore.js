@@ -8,7 +8,7 @@ const assetsToLoad = [
   },
   {
     id:'environment',
-    path:'/models/Final Scene3/Final Scene3.gltf',
+    path:'/models/Final Scene4/Final Scene4.gltf',
     type: 'model'
   },
   

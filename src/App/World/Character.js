@@ -22,7 +22,7 @@ export default class Character {
       visible: false,
     });
     this.instance = new THREE.Mesh(geometry, material);
-    this.instance.position.set(0, 4, 100);
+    this.instance.position.set(-10, 4, 75);
     this.scene.add(this.instance);
 
     // add avatar to character

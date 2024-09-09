@@ -3,12 +3,13 @@ import assetStore from "../Utils/AssetStore.js";
 import App from "../App.js";
 import ShowInfo from "./ShowInfo.js";
 import ModalContentProvider from "../UI/ModalContentProvider.js";
+import { Pane } from "tweakpane";
 export default class Environment {
   constructor() {
     this.app = new App();
     this.scene = this.app.scene;
     this.physics = this.app.world.physics;
-    this.pane = this.app.gui.pane;
+    this.pane = new Pane();
     this.assetStore = assetStore.getState();
     this.environment = this.assetStore.loadedAssets.environment;
     // this.arr = [];
@@ -44,7 +45,7 @@ export default class Environment {
       "Meidan_Saat",
       "Blue_Mosque",
       "Arg",
-      "Behnam",
+      "Behnam_House",
       "Ground",
       "Road",
     ];
@@ -63,9 +64,9 @@ export default class Environment {
       "Meidan_Saat",
       "Blue_Mosque",
       "Arg",
-      "Behnam",
+      "Behnam_House",
     ];
-    const physicalObjectsTree = ["Tree"];
+    const physicalObjectsTree = ["Tree", "City_Decoration"];
     const shadowCaster = [
       "Khaneh_Mashrouteh",
       "Sarkis_Church",
@@ -75,8 +76,9 @@ export default class Environment {
       "Meidan_Saat",
       "Blue_Mosque",
       "Arg",
-      "Behnam",
+      "Behnam_House",
       "Tree",
+      "City_Decoration",
     ];
 
     const ShadowRecive = ["Ground", "Road"];
@@ -86,6 +88,7 @@ export default class Environment {
       );
       if (isPhysicalObject) {
         child.traverse((obj) => {
+          console.log(obj)
           if (obj.isMesh) {
             this.physics.add(obj, "fixed", "trimesh");
           }
@@ -98,10 +101,10 @@ export default class Environment {
       if (envResive) {
         child.traverse((obj) => {
           if (obj.isMesh) {
-            obj.material.roughness = 0.27;
-            obj.material.metalness = 0.2;
-            obj.material.envMap = this.env;
-            obj.material.envMapIntensity = 0.2;
+            obj.material.roughness = 0.3;
+            obj.material.metalness = 0.09;
+            // obj.material.envMap = this.env;
+            // obj.material.envMapIntensity = 0.9;
             // console.log(obj.material.envMapIntensity);
           }
         });
@@ -125,6 +128,7 @@ export default class Environment {
       if (isShadowCaster) {
         child.traverse((obj) => {
           if (obj.isMesh) {
+            // console.log(obj)
             obj.castShadow = true;
           }
         });
@@ -137,40 +141,20 @@ export default class Environment {
         child.traverse((obj) => {
           if (obj.isMesh) {
             if (obj.name == "Ground") {
-              obj.material.roughness = 0.1;
+              obj.material.roughness = 0.2;
               obj.material.metalness = 0.3;
-              obj.material.color = new THREE.Color(0xffffff);
-              
-            } else {
-              obj.material.roughness = 0.9;
-              obj.material.metalness = 0;
-              // obj.material.envMap = this.env;
-            }
+              // obj.material.color = new THREE.Color(0xffffff);
+            } 
 
-            // obj.receiveShadow = true;
+            obj.material.envMap = this.env;
+            obj.receiveShadow = true;
           }
         });
       }
     }
   }
 
-  intensityLights() {
-    this.arr[0].intensity = 0.13;
-    this.arr[1].intensity = 0.18;
-    this.arr[2].intensity = 0.28;
-    this.arr[3].intensity = 0.27;
-    this.arr[4].intensity = 0.2;
-
-    // this.arr[0].intensity = 0.9;
-    // this.arr[1].intensity = 1.6;
-    // this.arr[2].intensity = 0.2;
-    // this.arr[3].intensity = 0.8;
-    // this.arr[4].intensity = 0.9;
-  }
   addLights() {
-    // const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
-    // this.scene.add(ambientLight);
-    // const textureLoader = new THREE.TextureLoader();
     const cubeTexture = new THREE.CubeTextureLoader();
     cubeTexture.setPath("texture/cubeMap/");
     this.env = cubeTexture.load([
@@ -182,31 +166,186 @@ export default class Environment {
       "nz.png",
     ]);
     this.scene.background = this.env;
-    // this.scene.environment = this.env
-    this.directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
-    this.directionalLight.position.set(20, 20, 0);
-    
-    // this.directionalLight.rotation.set()
-    // this.directionalLight.scale.setScalar(1)
-    this.directionalLight.castShadow = true;
-    // this.directionalLight.shadow.camera = 30
-    this.directionalLight.shadow.bias = 0.002;
+    this.directionalLight1 = new THREE.DirectionalLight('#acc2df', 1.2);
+    this.directionalLight2 = new THREE.DirectionalLight('#efd892', 1.1);
+    this.directionalLight3 = new THREE.DirectionalLight('#efd892', 1.1);
+    this.directionalLight4 = new THREE.DirectionalLight('#d2c2c2', 1.4);
+    this.directionalLight5 = new THREE.DirectionalLight('#bcc8c4', 3);
 
-    this.directionalLight.shadow.normalBias = 0.072;
+    this.directionalLight1.position.set(-55, 9, -82);
+    this.directionalLight2.position.set(-104, 20, 0);
+    this.directionalLight3.position.set(104, 20, 0);
+    this.directionalLight4.position.set(0, 26, 150);
+    this.directionalLight5.position.set(0, 3, 0);
+    // this.pane.addInput(this.directionalLight1.position, "x", {
+    //   min: -150,
+    //   max: 150,
+    //   step: 1,
+    // });
+    // this.pane.addInput(this.directionalLight1.position, "y", {
+    //   min: 0,
+    //   max: 50,
+    //   step: 1,
+    // });
+    // this.pane.addInput(this.directionalLight1.position, "z", {
+    //   min: -150,
+    //   max: 150,
+    //   step: 1,
+    // });
+    // this.pane.addInput(this.directionalLight1, 'intensity', {
+    //   min: 0,
+    //   max: 2,
+    //   step: 0.01
+    // })
+    // const param = {
+    //   light1: "#f05",
+    //   light2: "#f05",
+    //   light3: "#f05",
+    //   light4: "#f05",
+    //   light5 :"#f05",
+    // };
+
+    // this.pane.addInput(param, "light1").on("change", (e) => {
+    //   this.directionalLight1.color = new THREE.Color(e.value);
+    // });
+
+    // this.pane.addInput(this.directionalLight2.position, "x", {
+    //   min: -150,
+    //   max: 150,
+    //   step: 1,
+    // });
+    // this.pane.addInput(this.directionalLight2.position, "y", {
+    //   min: 0,
+    //   max: 50,
+    //   step: 1,
+    // });
+    // this.pane.addInput(this.directionalLight2.position, "z", {
+    //   min: -150,
+    //   max: 150,
+    //   step: 1,
+    // });
+    // this.pane.addInput(this.directionalLight2, 'intensity', {
+    //   min: 0,
+    //   max: 2,
+    //   step: 0.01
+    // })
+
+    // this.pane.addInput(param, "light2").on("change", (e) => {
+    //   this.directionalLight2.color = new THREE.Color(e.value);
+    // });
+
+    // this.pane.addInput(this.directionalLight3.position, "x", {
+    //   min: -150,
+    //   max: 150,
+    //   step: 1,
+    // });
+    // this.pane.addInput(this.directionalLight3.position, "y", {
+    //   min: 0,
+    //   max: 50,
+    //   step: 1,
+    // });
+    // this.pane.addInput(this.directionalLight3.position, "z", {
+    //   min: -150,
+    //   max: 150,
+    //   step: 1,
+    // });
+
+    // this.pane.addInput(this.directionalLight3, "intensity", {
+    //   min: 0,
+    //   max: 2,
+    //   step: 0.01,
+    // });
+    // this.pane.addInput(param, "light3").on("change", (e) => {
+    //   this.directionalLight3.color = new THREE.Color(e.value);
+    // });
+    // this.pane.addInput(this.directionalLight4.position, "x", {
+    //   min: -150,
+    //   max: 150,
+    //   step: 1,
+    // });
+    // this.pane.addInput(this.directionalLight4.position, "y", {
+    //   min: 0,
+    //   max: 50,
+    //   step: 1,
+    // });
+    // this.pane.addInput(this.directionalLight4.position, "z", {
+    //   min: -150,
+    //   max: 150,
+    //   step: 1,
+    // });
+    // this.pane.addInput(this.directionalLight4, "intensity", {
+    //   min: 0,
+    //   max: 2,
+    //   step: 0.01,
+    // });
+
+    // this.pane.addInput(param, "light4").on("change", (e) => {
+    //   this.directionalLight5.color = new THREE.Color(e.value);
+    // });
+    // this.pane.addInput(this.directionalLight5.position, "x", {
+    //   min: -150,
+    //   max: 150,
+    //   step: 1,
+    // });
+    // this.pane.addInput(this.directionalLight5.position, "y", {
+    //   min: 0,
+    //   max: 50,
+    //   step: 1,
+    // });
+    // this.pane.addInput(this.directionalLight5.position, "z", {
+    //   min: -150,
+    //   max: 150,
+    //   step: 1,
+    // });
+    // this.pane.addInput(this.directionalLight5, 'intensity', {
+    //   min: 0,
+    //   max: 4,
+    //   step: 0.01
+    // })
+
+    // this.pane.addInput(param, "light5").on("change", (e) => {
+    //   this.directionalLight5.color = new THREE.Color(e.value);
+    // });
+    
+    // this.directionalLight.rotation.set(2)
+    // this.directionalLight.scale.setScalar(2)
+    // this.directionalLight1.castShadow = true;
+    this.directionalLight2.castShadow = true;
+    // this.directionalLight3.castShadow = true;
+    // this.directionalLight4.castShadow = true;
+    // this.directionalLight5.castShadow = true;
+    // this.directionalLight.shadowCameraLeft = -3000;
+    // this.directionalLight.shadowCameraRight = 3000;
+    // this.directionalLight.shadowCameraTop = 3500;
+    // this.directionalLight.shadowCameraBottom = -3000;
+    // this.directionalLight.shadow.bias = 0.002;
+
+    // this.directionalLight.shadow.normalBias = 0.072;
     // this.directionalLight.shadow.camera.top = 30;
-    this.scene.add(this.directionalLight);
-    const helper = new THREE.DirectionalLightHelper(this.directionalLight, 5);
-    // this.scene.add(helper);
-    // this.scene.add(this.directionalLight);
+    this.scene.add(this.directionalLight1);
+    this.scene.add(this.directionalLight2);
+    this.scene.add(this.directionalLight3);
+    this.scene.add(this.directionalLight4);
+    this.scene.add(this.directionalLight5);
+    // const helper1 = new THREE.DirectionalLightHelper(this.directionalLight1, 5);
+    // const helper2 = new THREE.DirectionalLightHelper(this.directionalLight2, 5);
+    // const helper3 = new THREE.DirectionalLightHelper(this.directionalLight3, 5);
+    // const helper4 = new THREE.DirectionalLightHelper(this.directionalLight4, 5);
+    // const helper5 = new THREE.DirectionalLightHelper(this.directionalLight5, 5);
+    // this.scene.add(helper1);
+    // this.scene.add(helper2);
+    // this.scene.add(helper3);
+    // this.scene.add(helper4);
+    // this.scene.add(helper5);
+    // // this.scene.add(this.directionalLight);
 
     // this.scene.add(helper)
-
   }
 
   showInformation() {
     const meshInfo1 = this.environment.scene.getObjectByName("Arg");
 
-    const meshInfo2 = this.environment.scene.getObjectByName("Behnam");
+    const meshInfo2 = this.environment.scene.getObjectByName("Behnam_House");
     const meshInfo3 = this.environment.scene.getObjectByName("Blue_Mosque");
     const meshInfo4 = this.environment.scene.getObjectByName("El_Goli");
     const meshInfo5 = this.environment.scene.getObjectByName("Gajar_Muesume");
@@ -230,7 +369,7 @@ export default class Environment {
     );
     this.info2 = new ShowInfo(
       meshInfo2,
-      modalContentProvider.getModalInfo("Behnam")
+      modalContentProvider.getModalInfo("Behnam_House")
     );
     this.info3 = new ShowInfo(
       meshInfo3,
