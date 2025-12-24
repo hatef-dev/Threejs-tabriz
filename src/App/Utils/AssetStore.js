@@ -3,12 +3,12 @@ import { createStore } from "zustand/vanilla";
 const assetsToLoad = [
   {
     id:'avatar',
-    path:'/models/avatar.glb',
+    path:'models/avatar.glb',
     type: 'model' 
   },
   {
     id:'environment',
-    path:'/models/Final Scene4/Final Scene4.gltf',
+    path:'models/Final Scene4/Final Scene4.gltf',
     type: 'model'
   },
   
